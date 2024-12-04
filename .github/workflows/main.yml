@@ -39,4 +39,5 @@ jobs:
 
         - name: connect and pull
           run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "docker pull ${{ secrets.DOCKERHUB_USERNAME }}/test-project:latest && docker run -p 80:80 -d --rm ${{ secrets.DOCKERHUB_USERNAME }}/test-project:latest && exit"
-
+        - name: cleanup
+          run: rm -rf ~/.ssh
