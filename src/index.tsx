@@ -8,4 +8,4 @@ if (!root) {
 
 const react = createRoot(root);
 
-react.render(<h1>APP Edited 6</h1>);
+react.render(<h1>APP Edited 7</h1>);
