@@ -1,8 +1,8 @@
 name: GitHub Actions Demo
 
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+run-name: CI
 
-on: workflow_dispatch
+on: push
 
 jobs:   
   publish:
@@ -25,19 +25,19 @@ jobs:
           uses: docker/build-push-action@v6
           with:
             push: true
-            tags: ${{ secrets.DOCKERHUB_USERNAME }}/test-project:latest
+            tags: ${{ secrets.DOCKERHUB_USERNAME }}/frontend-test-project:latest
 
-#   deploy:
-#     needs: publish
-#     runs-on: ubuntu-latest
-#     steps:
-#         - name: install ssh keys
-#           run: |
-#             install -m 600 -D /dev/null ~/.ssh/id_rsa
-#             echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-#             ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
+  deploy:
+    needs: publish
+    runs-on: ubuntu-latest
+    steps:
+        - name: install ssh keys
+          run: |
+            install -m 600 -D /dev/null ~/.ssh/id_rsa
+            echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+            ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
 
-#         - name: connect and pull
-#           run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "docker pull ${{ secrets.DOCKERHUB_USERNAME }}/test-project:latest && docker run -p 80:80 -d --rm ${{ secrets.DOCKERHUB_USERNAME }}/test-project:latest && exit"
-#         - name: cleanup
-#           run: rm -rf ~/.ssh
+        - name: connect and pull
+          run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.DIRECTORY }} && docker compose pull && docker compose up -d && docker image prune -f && exit"
+        - name: cleanup
+          run: rm -rf ~/.ssh
